@@ -1,29 +1,29 @@
-FROM alpine
+FROM alpine:3.11
 RUN apk add --no-cache certbot
-ARG TZ="Asia/Shanghai"
 # process wrapper
+WORKDIR /app
 LABEL maintainer "sebs sebsclub@outlook.com"
-ENV TROJAN_VERSION 1.16.0 
-ENV TROJAN_CONFIG_DIR /etc/trojan/
-ENV V2RAY_DOWNLOAD_URL https://github.com/trojan-gfw/trojan/releases/download/v${TROJAN_VERSION}/trojan-${TROJAN_VERSION}-linux-amd64.tar.xz
-
-RUN apk upgrade --update \
-    && apk add \
-        bash \
-        tar \
-        tzdata \
-        curl \
-    && mkdir -p \ 
-        ${TROJAN_CONFIG_DIR} \
-        /tmp/trojan \
-    && curl -L -H "Cache-Control: no-cache" -o /tmp/trojan/trojan.zip ${V2RAY_DOWNLOAD_URL} \
-    && pwd \
-    && tar -xf /tmp/trojan/trojan.zip -C /tmp/trojan/ \
-    && mv /tmp/trojan/trojan /usr/bin \
-    && chmod +x /usr/bin/trojan \
-    && apk del curl \
-    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo ${TZ} > /etc/timezone \
-    && rm -rf /tmp/trojan /var/cache/apk/*
-
-ENTRYPOINT ["certbot"]
+ENV TROJAN_VERSION 1.16.0
+RUN apk add --no-cache --virtual build-dependencies libpng-dev build-base certbot bash tzdata cmake boost-dev openssl-dev mariadb-connector-c-dev && \
+    wget https://github.com/trojan-gfw/trojan/archive/v${TROJAN_VERSION}.tar.gz && \
+    tar zxf v${TROJAN_VERSION}.tar.gz && \
+    cd trojan-${TROJAN_VERSION} && \
+    cmake . && \
+    make && \
+    strip -s trojan && \
+    mv trojan /usr/local/bin && \
+    apk add --no-cache --virtual .trojan-rundeps libstdc++ boost-system boost-program_options mariadb-connector-c && \
+    rm -rf /var/cache/apk /usr/share/man /root/trojan-${TROJAN_VERSION} /root/v${TROJAN_VERSION}.tar.gz &&\
+    cd &&\
+    wget https://fukuchi.org/works/qrencode/qrencode-4.0.2.tar.gz && \
+    tar zxf qrencode-4.0.2.tar.gz && \
+    cd qrencode-4.0.2 && \
+    cmake . && \
+    make && \
+    strip -s qrencode && \
+    mv qrencode /usr/local/bin
+COPY trojan.json /app/trojan.json
+ADD start.sh /start.sh
+EXPOSE 443 80
+ENTRYPOINT ["sh","/start.sh"]
+# CMD [ "trojan" ]
