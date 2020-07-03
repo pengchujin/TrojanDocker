@@ -34,7 +34,4 @@ sudo docker logs trojan
 ```
 sudo docker stop trojan
 ```
-- 想启用这个 docker 和服务
-```
-sudo docker run trojan
-```
+
