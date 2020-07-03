@@ -12,6 +12,10 @@ certbot certonly --standalone --preferred-challenges http -d ${domain} -m ${mail
 A
 Y
 EOF
+if [ ! -f "/etc/letsencrypt/live/${domain}/fullchain.pem" ]; then
+  echo "申请证书错误请检查，DNS 解析或太频繁申请被拒，请一小时后再尝试。"
+  exit
+fi
 sed -i "s/helloworld/${password}/" /app/trojan.json
 sed -i "s/domain/${domain}/" /app/trojan.json
 echo "----------------------------------------- 配置文件 -----------------------------------------"

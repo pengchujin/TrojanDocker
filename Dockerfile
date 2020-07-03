@@ -24,6 +24,8 @@ RUN apk add --no-cache --virtual build-dependencies libpng-dev build-base certbo
     mv qrencode /usr/local/bin
 COPY trojan.json /app/trojan.json
 ADD start.sh /start.sh
+ADD crontab.txt /crontab.txt
+RUN /usr/bin/crontab /crontab.txt
 EXPOSE 443 80
 ENTRYPOINT ["sh","/start.sh"]
 # CMD [ "trojan" ]
