@@ -20,7 +20,7 @@
 - 请将下面命令中的 YOURDOMAIN.COM（域名）替换成自己的域名（此IP解析的域名）！！！password 设置为密码，email 填写自己的邮件作为 Certbot 邮件接收。
 
   ```
-  sudo docker run -d  --rm --name trojan -p 443:443 -p 80:80 pengchujin/trojan_docker:0.08 YOURDOMAIN.COM password email@email.com && sleep 3s && sudo docker logs trojan
+  sudo docker run -d  --rm --name trojan -p 443:443 -p 80:80 pengchujin/trojan_docker:0.09 YOURDOMAIN.COM password email@email.com && sleep 3s && sudo docker logs trojan
   ```
 
 - 命令执行完会显示链接信息，如果想查看链接信息，执行下面命令即可
